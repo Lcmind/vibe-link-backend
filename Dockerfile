@@ -46,10 +46,10 @@ RUN chmod 777 /app
 RUN pip install --no-cache-dir uv
 
 # Copy dependency files first (layer caching optimization)
-COPY pyproject.toml .
+COPY requirements.txt .
 
 # Install Python dependencies with uv (10-100x faster than pip)
-RUN uv pip install --system --no-cache .
+RUN uv pip install --system --no-cache -r requirements.txt
 
 # Copy application code
 COPY . .
