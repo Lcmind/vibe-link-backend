@@ -1,7 +1,7 @@
 # VIBE_LINK Backend - Optimized Production Dockerfile
 # Designed for Hugging Face Spaces with Headless Chrome support
 
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Set environment variables for optimization
 ENV PYTHONUNBUFFERED=1 \
