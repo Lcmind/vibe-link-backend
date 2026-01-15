@@ -6,8 +6,11 @@ import io
 from app.core.config import settings
 
 
-# Initialize Hugging Face Inference Client
-hf_client = InferenceClient(token=settings.hf_token)
+# Initialize Hugging Face Inference Client with new router endpoint
+hf_client = InferenceClient(
+    token=settings.hf_token,
+    base_url="https://router.huggingface.co"
+)
 
 
 async def generate_poster(analysis: dict) -> str:
