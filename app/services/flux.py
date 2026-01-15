@@ -1,16 +1,9 @@
 """Flux AI image generation service."""
 
-from huggingface_hub import InferenceClient
+import httpx
 from PIL import Image
 import io
 from app.core.config import settings
-
-
-# Initialize Hugging Face Inference Client with new router endpoint
-hf_client = InferenceClient(
-    token=settings.hf_token,
-    base_url="https://router.huggingface.co"
-)
 
 
 async def generate_poster(analysis: dict) -> str:
@@ -45,26 +38,35 @@ Quality: 8K, ultra-detailed, professional graphic design, award-winning
     
     negative_prompt = "text, letters, words, typography, watermark, signature, blurry, low quality, photograph, realistic, 3d render"
     
-    # Generate image using Flux.1-schnell (4 steps, fast)
-    image_bytes = hf_client.text_to_image(
-        prompt=prompt,
-        negative_prompt=negative_prompt,
-        model=settings.flux_model,
-        num_inference_steps=settings.flux_steps,
-        guidance_scale=0.0,  # Schnell doesn't use guidance scale
-        width=1024,
-        height=1024,
-    )
+    # Use new HF router endpoint directly
+    headers = {
+        "Authorization": f"Bearer {settings.hf_token}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "inputs": prompt,
+        "parameters": {
+            "negative_prompt": negative_prompt,
+            "num_inference_steps": settings.flux_steps,
+            "guidance_scale": 0.0,
+            "width": 1024,
+            "height": 1024,
+        }
+    }
+    
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        response = await client.post(
+            f"https://api-inference.huggingface.co/models/{settings.flux_model}",
+            headers=headers,
+            json=payload
+        )
+        response.raise_for_status()
+        image_bytes = response.content
     
     # Save generated image
     poster_path = '/tmp/poster.png'
-    
-    # Convert bytes to PIL Image and save
-    if isinstance(image_bytes, bytes):
-        img = Image.open(io.BytesIO(image_bytes))
-    else:
-        img = image_bytes
-    
+    img = Image.open(io.BytesIO(image_bytes))
     img.save(poster_path)
     
     return poster_path
