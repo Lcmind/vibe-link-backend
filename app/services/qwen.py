@@ -75,6 +75,8 @@ Extract key information to create a poster that VISUALLY REPRESENTS what this co
         result = response.json()
         # Qwen-VL은 답변이 result['answer']에 들어있음
         text = result.get("answer", "").strip()
+        print("[QWEN RAW RESPONSE]", result)
+        print("[QWEN ANSWER TEXT]", text)
 
     # 기존 JSON 파싱 로직 재사용
     if "```json" in text:
@@ -84,11 +86,14 @@ Extract key information to create a poster that VISUALLY REPRESENTS what this co
     text = text[text.find('{'):text.rfind('}')+1]
     try:
         analysis = json.loads(text)
+        print("[QWEN PARSED ANALYSIS]", analysis)
         return analysis
     except json.JSONDecodeError as e:
         text = text.replace("'", '"').replace('\n', ' ')
         try:
             analysis = json.loads(text)
+            print("[QWEN PARSED ANALYSIS - RETRY]", analysis)
             return analysis
         except:
+            print("[QWEN PARSE ERROR]", text[:200])
             raise Exception(f"Failed to parse Qwen response as JSON: {text[:200]}")
