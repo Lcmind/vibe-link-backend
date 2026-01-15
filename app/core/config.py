@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     ]
     
     # 분석 모델 선택: "gemini", "groq", "qwen"
-    analysis_model: str = "qwen"  # "gemini", "groq", "qwen" 중 선택
+    analysis_model: str = "groq"  # "gemini", "groq", "qwen" 중 선택
     
     class Config:
         env_file = ".env"
