@@ -1,3 +1,12 @@
+---
+title: VIBE_LINK Server
+emoji: 🎨
+colorFrom: black
+colorTo: green
+sdk: docker
+pinned: false
+---
+
 # 🎨 VIBE_LINK Backend
 
 AI-powered serverless API that transforms website URLs into stunning "Vibe Poster" images using Google Gemini and Hugging Face Flux.1.
