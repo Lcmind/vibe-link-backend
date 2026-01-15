@@ -21,39 +21,60 @@ async def generate_poster(analysis: dict) -> str:
     """
     # Construct detailed prompt for Flux
     title = analysis.get('title', 'Brand')
+    category = analysis.get('category', 'Productivity')
+    hero_object = analysis.get('hero_object', 'a floating glass cube')
     atmosphere = analysis.get('atmosphere', 'modern and clean aesthetic')
     primary_color = analysis.get('primary_color', '#000000')
     accent_color = analysis.get('accent_color', '#FFFFFF')
     keywords = ', '.join(analysis.get('keywords', ['modern', 'minimal']))
     
+    # Category-specific style rules
+    if category == 'Productivity':
+        style_keywords = "Apple Style, Dieter Rams, Frosted Glass, Soft Studio Lighting, Minimalist, Zen, Spacious, Air"
+        negative_additions = "NO cluttered elements, NO complex machinery, NO glitch effects, NO random messy lines"
+    elif category == 'Dev':
+        style_keywords = "Matrix style, Clean dark mode, Terminal aesthetic, Code-inspired"
+        negative_additions = ""
+    elif category == 'Creative':
+        style_keywords = "Colorful, Abstract, Artistic, Expressive"
+        negative_additions = ""
+    else:
+        style_keywords = "Modern, Professional, Clean"
+        negative_additions = ""
+    
     prompt = f"""
-A high-fashion vertical poster design (9:16 ratio, 768x1344px). 
+A high-end vertical commercial poster design (9:16 aspect ratio, 768x1344px).
 
-VISUAL CONCEPT:
-- Brand essence: {title}
-- Atmosphere: {atmosphere}
-- Abstract metaphor representing the service (NOT website UI)
-- NO buttons, NO browser elements, NO screenshots
+COMPOSITION (MANDATORY):
+- **Center Composition:** Place '{hero_object}' in the center
+- **Negative Space:** Leave 40% of the image empty (clean background) to symbolize calmness
+- **Hero Object:** {hero_object}
 
-TEXT INTEGRATION:
-- Render "{title}" as a physical 3D object in the scene
-- Style options: Neon sign, Gold engraving, Concrete letters, Holographic floating text
-- Position: Center or top-center, bold typography
+BRAND TEXT:
+- The word '{title}' formed by a 3D object (glowing neon tube floating in air, or engraved in metal)
+- Font style: Swiss Typography, Clean Sans-serif
+- Position: Top-center or integrated with hero object
 - ENGLISH ONLY (no Korean characters)
 
-COLOR PALETTE:
+COLOR PALETTE (STRICT):
 - Primary: {primary_color}
 - Accent: {accent_color}
-- Professional gradient or solid backgrounds
+- Use gradients or solid backgrounds only
 
-STYLE & QUALITY:
-- Abstract, geometric, minimalist luxury branding
+STYLE ENFORCERS:
+- {style_keywords}
 - Keywords: {keywords}
-- Unreal Engine 5 render, 8K, volumetric lighting
+- Atmosphere: {atmosphere}
+
+QUALITY BOOSTERS:
+- Unreal Engine 5, 8K, Octane Render, Ray Tracing
+- Super-Resolution, Anti-Aliasing
 - Cinematic composition, award-winning design
-- Professional graphic design aesthetic
+
+CATEGORY: {category}
 """
-    negative_prompt = "text, letters, words, typography, watermark, signature, blurry, low quality, photograph, realistic, 3d render"
+    
+    negative_prompt = f"text, letters, words, typography, watermark, signature, blurry, low quality, photograph, realistic, 3d render, {negative_additions}"
     
     # Use new HF router endpoint directly
     headers = {
