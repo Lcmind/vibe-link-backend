@@ -61,5 +61,5 @@ EXPOSE 7860
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:7860/health', timeout=5)"
 
-# Run FastAPI with production settings for HF Spaces
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1", "--proxy-headers", "--forwarded-allow-ips", "*"]
+# Run Gradio wrapper (which includes FastAPI)
+CMD ["python", "app.py"]
