@@ -21,50 +21,60 @@ async def generate_poster(analysis: dict) -> str:
     """
     # Construct detailed prompt for Flux
     brand_name = analysis.get('brand_name', 'BRAND')
-    core_offering = analysis.get('core_offering', 'innovative service')
-    visual_scene = analysis.get('visual_scene', 'modern abstract background')
-    brand_text_material = analysis.get('brand_text_material', 'glowing neon letters')
-    primary_color = analysis.get('primary_color', '#000000')
-    secondary_colors = analysis.get('secondary_colors', [])
-    keywords = ', '.join(analysis.get('keywords', ['modern', 'professional']))
+    what_they_do = analysis.get('what_they_do', 'innovative service')
+    visual_scene = analysis.get('visual_scene', 'modern clean environment')
+    color_palette = analysis.get('color_palette', {'primary': '#000000', 'secondary': []})
+    mood = analysis.get('mood', 'professional modern')
+    key_objects = analysis.get('key_objects', ['modern design'])
     
-    # Build color description
-    if secondary_colors and len(secondary_colors) > 0:
-        color_desc = f"multi-colored ({', '.join(secondary_colors)})"
+    primary_color = color_palette.get('primary', '#000000')
+    secondary_colors = color_palette.get('secondary', [])
+    
+    # Build color lighting description
+    if secondary_colors and len(secondary_colors) > 1:
+        colors_list = [primary_color] + secondary_colors
+        color_lighting = f"Multi-colored lighting and accents in {', '.join(colors_list)}"
     else:
-        color_desc = f"in {primary_color} color scheme"
+        color_lighting = f"Dramatic {primary_color} colored lighting and accents"
+    
+    # Key objects for scene
+    objects_desc = ', '.join(key_objects) if key_objects else 'modern elements'
     
     prompt = f"""
-A high-end vertical commercial poster (9:16 aspect ratio, 768x1344px).
+A stunning vertical commercial poster (9:16 aspect ratio, 768x1344px).
 
-THE HERO TEXT (BRAND NAME AS THE CENTERPIECE):
-The text '{brand_name}' is the main focal point of the image.
-The text is rendered as: {brand_text_material}
-The text colors: {color_desc}
-Typography: Bold, big, legible, positioned prominently (center or top-center).
+THE SCENE (WHAT THIS BRAND REPRESENTS):
+{visual_scene}
 
-THE VISUAL SCENE (REPRESENTING WHAT THEY DO):
-Core business: {core_offering}
-Background environment: {visual_scene}
+KEY VISUAL ELEMENTS IN THE SCENE:
+- {objects_desc}
+- A large prominent display area or glowing sign placeholder in the center-top
+- The scene should clearly communicate: {what_they_do}
 
-STYLE & ATMOSPHERE:
-- Cinematic commercial photography
-- Keywords: {keywords}
-- Volumetric lighting, dramatic depth of field
-- Clean composition, professional aesthetic
+LIGHTING & COLOR ATMOSPHERE:
+- {color_lighting}
+- Mood: {mood}
+- Cinematic volumetric lighting with dramatic depth
+
+COMPOSITION:
+- Clean, organized layout
+- Negative space around the center-top for branding area
+- Everything leads the eye to the center focal point
 
 TECHNICAL QUALITY:
-- 8K resolution, Unreal Engine 5 render
-- Octane Render, Ray Tracing, Super-Resolution
-- Award-winning commercial poster design
+- Ultra-detailed commercial photography
+- 8K resolution, Unreal Engine 5 quality
+- Octane Render, Ray Tracing
+- Professional advertising poster aesthetic
+- Sharp focus, perfect exposure
 
-STRICT RULES:
-- NO UI elements, NO browser bars, NO website screenshots
-- Text must be in ENGLISH only (no Korean characters)
-- Focus on brand essence through visual metaphor
+STYLE:
+- High-end brand commercial
+- Magazine cover quality
+- Premium advertising campaign aesthetic
 """
     
-    negative_prompt = "UI elements, browser interface, website screenshot, messy layout, cluttered, blurry, low quality, watermark, signature, small unreadable text, random Korean text, chaotic composition"
+    negative_prompt = "text, words, letters, typography, watermark, logo, brand name, signature, blurry, low quality, amateur, messy, cluttered, chaotic, random patterns, liquid metal, abstract noise, distorted, warped, ugly, deformed"
     
     # Use new HF router endpoint directly
     headers = {
