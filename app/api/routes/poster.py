@@ -5,7 +5,6 @@ from app.schemas.poster import PosterRequest, PosterResponse
 from app.services.screenshot import capture_screenshot
 from app.services.gemini import analyze_with_gemini
 from app.services.flux import generate_poster
-from app.services.overlay import add_brand_overlay
 from app.services.imgbb import upload_to_imgbb
 
 router = APIRouter(prefix="/api", tags=["poster"])
@@ -19,9 +18,11 @@ async def create_poster(request: PosterRequest):
     Pipeline:
     1. Capture website screenshot
     2. Analyze with Gemini Vision AI
-    3. Generate poster with Flux AI
-    4. Add brand overlay with Pillow
-    5. Upload to ImgBB for permanent hosting
+    3. Generate poster with Flux AI (includes brand text in image)
+    4. Upload to ImgBB for permanent hosting
+    
+    Note: Flux generates the brand name text directly in the image.
+    No overlay needed - text is part of the generated design.
     
     Args:
         request: PosterRequest with URL
@@ -36,18 +37,13 @@ async def create_poster(request: PosterRequest):
         # Step 2: Analyze with Gemini
         analysis = await analyze_with_gemini(screenshot_path)
         
-        # Step 3: Generate poster with Flux
+        # Step 3: Generate poster with Flux (brand text included in prompt)
         poster_path = await generate_poster(analysis)
         
-        # Step 4: Add brand name overlay with Pillow
+        # Step 4: Upload to ImgBB (no overlay - Flux generates text)
+        poster_url = await upload_to_imgbb(poster_path)
+        
         brand_name = analysis.get('brand_name', 'BRAND')
-        primary_color = analysis.get('primary_color', '#FFFFFF')
-        mood = analysis.get('mood', 'Clean')
-        
-        final_poster_path = add_brand_overlay(poster_path, brand_name, primary_color, mood)
-        
-        # Step 5: Upload to ImgBB
-        poster_url = await upload_to_imgbb(final_poster_path)
         
         return PosterResponse(
             poster_url=poster_url,

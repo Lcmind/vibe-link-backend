@@ -9,6 +9,7 @@ from app.core.config import settings
 async def generate_poster(analysis: dict) -> str:
     """
     Generate a poster using Flux.1-schnell based on analysis.
+    Flux generates the brand name text directly in the image.
     
     Args:
         analysis: Analysis results from Gemini
@@ -19,37 +20,36 @@ async def generate_poster(analysis: dict) -> str:
     Raises:
         Exception: If generation fails
     """
-    # Extract analysis data with new schema
+    # Extract analysis data
+    brand_name = analysis.get('brand_name', 'BRAND').upper()
     business_type = analysis.get('business_type', 'Productivity')
     poster_objects = analysis.get('poster_objects', 'modern workspace elements')
     background_style = analysis.get('background_style', 'Clean gradient')
     primary_color = analysis.get('primary_color', '#4A90D9')
     mood = analysis.get('mood', 'Clean')
     
-    # === 10-YEAR PROMPT ENGINEER'S PERFECT PROMPT STRUCTURE ===
+    # === PROMPT MASTER'S TEXT GENERATION RULES FOR FLUX ===
     # 
-    # Rule 1: Start with medium and format
-    # Rule 2: Subject first, then style
-    # Rule 3: Be concrete, not abstract
-    # Rule 4: Quality tags at the end
-    # Rule 5: Negative prompt blocks unwanted elements
+    # Rule 1: Quote the text exactly - Flux reads quoted strings
+    # Rule 2: Specify font style and weight (bold, sans-serif, etc.)
+    # Rule 3: Specify exact position (top center, bottom left, etc.)
+    # Rule 4: Make text part of the design context (signage, neon, embossed)
+    # Rule 5: Keep text SHORT (1-2 words max for reliability)
     
-    prompt = f"""Commercial photography poster, vertical composition, 9:16 aspect ratio.
+    prompt = f"""High-end commercial poster design, vertical 9:16 format.
 
-Subject: {poster_objects}, arranged aesthetically in frame.
+Typography: Bold modern text "{brand_name}" prominently displayed at top center of the frame, clean sans-serif font, white text with subtle shadow, professional branding typography.
 
-Environment: {background_style} background, professional studio setup, {mood.lower()} atmosphere.
+Scene: {poster_objects} arranged beautifully below the text, {background_style} setting, {mood.lower()} atmosphere.
 
-Lighting: Soft diffused studio lighting, subtle shadows, {primary_color} color accents in the scene.
+Color palette: {primary_color} as accent color, harmonious tones throughout.
 
-Style: High-end advertising campaign, clean minimalist design, modern corporate aesthetic, magazine quality.
+Style: Premium advertising campaign aesthetic, Apple-style minimalism, magazine cover quality, professional product photography.
 
-Composition: Empty space at top 15% of frame for text overlay, centered focal point, balanced layout.
-
-Quality: 8k resolution, sharp focus, professional color grading, commercial photography."""
+Technical: Studio lighting, soft shadows, sharp focus, 8k resolution, commercial photography, masterpiece."""
     
-    # Optimized negative prompt - specific and targeted
-    negative_prompt = "text, words, letters, typography, watermark, logo, signature, blurry, noise, grainy, amateur, low quality, distorted, ugly, planets, space, galaxy, stars, cosmos, abstract art, random patterns, cluttered, messy, chaotic"
+    # Negative prompt - allow text but block unwanted elements
+    negative_prompt = "blurry, noise, grainy, amateur, low quality, distorted, ugly, planets, space, galaxy, stars, cosmos, abstract art, random patterns, cluttered, messy, chaotic, bad typography, misspelled text, distorted letters, unreadable text"
     
     headers = {
         "Authorization": f"Bearer {settings.hf_token}",
