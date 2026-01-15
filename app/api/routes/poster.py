@@ -46,6 +46,9 @@ async def create_poster(request: PosterRequest):
         )
         
     except Exception as e:
+        import traceback
+        error_detail = f"{str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+        print(f"ERROR in /api/create: {error_detail}")  # Log to container
         raise HTTPException(status_code=500, detail=str(e))
 
 
