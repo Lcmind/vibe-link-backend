@@ -64,5 +64,5 @@ ENV HOME=/home/user \
 # Expose port
 EXPOSE 7860
 
-# Run FastAPI
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Run simple test app first to verify HF Spaces setup
+CMD ["uvicorn", "test_app:app", "--host", "0.0.0.0", "--port", "7860"]
