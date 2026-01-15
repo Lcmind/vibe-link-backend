@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     # API Keys - pydantic_settings reads from env automatically
     hf_token: str = Field(default="", alias="HF_TOKEN")
     gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
+    groq_api_key: str = Field(default="", alias="GROQ_API_KEY")
     imgbb_key: str = Field(default="", alias="IMGBB_KEY")
     
     # CORS Origins - 환경에 따라 동적 설정
@@ -34,6 +35,7 @@ class Settings(BaseSettings):
     
     # Gemini Model - 2.5-flash
     gemini_model: str = "gemma-3-27b-it"
+    groq_model: str = "meta-llama/llama-4-maverick-17b-128e-instruct"
     
     # Pyppeteer Settings
     puppeteer_executable_path: str = "/usr/bin/chromium"
@@ -43,6 +45,9 @@ class Settings(BaseSettings):
         "--disable-dev-shm-usage",
         "--disable-gpu",
     ]
+    
+    # 분석 모델 선택: "gemini" 또는 "groq"
+    analysis_model: str = "groq"  # 또는 "gemini"
     
     class Config:
         env_file = ".env"

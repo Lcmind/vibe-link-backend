@@ -3,7 +3,9 @@
 from fastapi import APIRouter, HTTPException
 from app.schemas.poster import PosterRequest, PosterResponse
 from app.services.screenshot import capture_screenshot
+from app.core.config import settings
 from app.services.gemini import analyze_with_gemini
+from app.services.groq import analyze_with_groq
 from app.services.flux import generate_poster
 from app.services.imgbb import upload_to_imgbb
 
@@ -34,8 +36,11 @@ async def create_poster(request: PosterRequest):
         # Step 1: Capture screenshot
         screenshot_path = await capture_screenshot(request.url)
         
-        # Step 2: Analyze with Gemini
-        analysis = await analyze_with_gemini(screenshot_path)
+        # Step 2: 분석 모델 자동 선택
+        if settings.analysis_model == "groq":
+            analysis = await analyze_with_groq(screenshot_path)
+        else:
+            analysis = await analyze_with_gemini(screenshot_path)
         
         # Step 3: Generate poster with Flux (brand text included in prompt)
         poster_path = await generate_poster(analysis)
