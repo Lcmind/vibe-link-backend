@@ -56,9 +56,9 @@ Quality: 8K, ultra-detailed, professional graphic design, award-winning
     }
     
     async with httpx.AsyncClient(timeout=60.0) as client:
-        # Use HF Inference API (models are accessible at this endpoint)
+        # Use new HF Router endpoint
         response = await client.post(
-            f"https://api-inference.huggingface.co/models/{settings.flux_model}",
+            f"https://router.huggingface.co/hf-inference/models/{settings.flux_model}",
             headers=headers,
             json=payload
         )
