@@ -21,60 +21,54 @@ async def generate_poster(analysis: dict) -> str:
     """
     # Construct detailed prompt for Flux
     brand_name = analysis.get('brand_name', 'BRAND')
-    what_they_do = analysis.get('what_they_do', 'innovative service')
-    visual_scene = analysis.get('visual_scene', 'modern clean environment')
-    color_palette = analysis.get('color_palette', {'primary': '#000000', 'secondary': []})
-    mood = analysis.get('mood', 'professional modern')
-    key_objects = analysis.get('key_objects', ['modern design'])
+    what_they_do = analysis.get('what_they_do', 'service')
+    poster_scene = analysis.get('poster_scene', 'modern clean design')
+    color_palette = analysis.get('color_palette', {'primary': '#4A90D9', 'secondary': []})
+    mood = analysis.get('mood', 'professional')
+    objects_list = analysis.get('objects_list', ['modern design elements'])
     
-    primary_color = color_palette.get('primary', '#000000')
+    primary_color = color_palette.get('primary', '#4A90D9')
     secondary_colors = color_palette.get('secondary', [])
     
-    # Build color lighting description
+    # Build specific color instruction
     if secondary_colors and len(secondary_colors) > 1:
-        colors_list = [primary_color] + secondary_colors
-        color_lighting = f"Multi-colored lighting and accents in {', '.join(colors_list)}"
+        all_colors = [primary_color] + secondary_colors
+        color_instruction = f"Color scheme using {', '.join(all_colors)} as accent colors throughout the scene"
     else:
-        color_lighting = f"Dramatic {primary_color} colored lighting and accents"
+        color_instruction = f"Color scheme dominated by {primary_color} with white and dark accents"
     
-    # Key objects for scene
-    objects_desc = ', '.join(key_objects) if key_objects else 'modern elements'
+    # Build objects description
+    objects_desc = ', '.join(objects_list) if objects_list else 'clean design elements'
     
     prompt = f"""
-A stunning vertical commercial poster (9:16 aspect ratio, 768x1344px).
+Commercial brand poster, vertical 9:16 aspect ratio.
 
-THE SCENE (WHAT THIS BRAND REPRESENTS):
-{visual_scene}
+SCENE DESCRIPTION:
+{poster_scene}
 
-KEY VISUAL ELEMENTS IN THE SCENE:
-- {objects_desc}
-- A large prominent display area or glowing sign placeholder in the center-top
-- The scene should clearly communicate: {what_they_do}
+KEY OBJECTS TO INCLUDE:
+{objects_desc}
 
-LIGHTING & COLOR ATMOSPHERE:
-- {color_lighting}
-- Mood: {mood}
-- Cinematic volumetric lighting with dramatic depth
+COLOR AND LIGHTING:
+{color_instruction}
+{mood} atmosphere
+Professional studio lighting, soft shadows, cinematic depth
 
-COMPOSITION:
-- Clean, organized layout
-- Negative space around the center-top for branding area
-- Everything leads the eye to the center focal point
+STYLE REQUIREMENTS:
+- Clean, modern, minimalist composition
+- Professional advertising photography quality
+- High-end brand commercial aesthetic
+- NO text, NO words, NO letters in the image
+- Leave empty space at top center for logo placement
 
-TECHNICAL QUALITY:
-- Ultra-detailed commercial photography
-- 8K resolution, Unreal Engine 5 quality
-- Octane Render, Ray Tracing
-- Professional advertising poster aesthetic
-- Sharp focus, perfect exposure
-
-STYLE:
-- High-end brand commercial
-- Magazine cover quality
-- Premium advertising campaign aesthetic
+TECHNICAL:
+- 8K resolution quality
+- Sharp focus throughout
+- Professional color grading
+- Magazine advertisement quality
 """
     
-    negative_prompt = "text, words, letters, typography, watermark, logo, brand name, signature, blurry, low quality, amateur, messy, cluttered, chaotic, random patterns, liquid metal, abstract noise, distorted, warped, ugly, deformed"
+    negative_prompt = "text, words, letters, numbers, typography, watermark, signature, logo, brand name, writing, caption, label, blurry, low quality, amateur, messy, cluttered, chaotic, ugly, distorted, deformed, oversaturated, planets, space, galaxy, cosmos, moons, stars, universe"
     
     # Use new HF router endpoint directly
     headers = {

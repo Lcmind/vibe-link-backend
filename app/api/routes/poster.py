@@ -5,6 +5,7 @@ from app.schemas.poster import PosterRequest, PosterResponse
 from app.services.screenshot import capture_screenshot
 from app.services.gemini import analyze_with_gemini
 from app.services.flux import generate_poster
+from app.services.overlay import add_brand_overlay
 from app.services.imgbb import upload_to_imgbb
 
 router = APIRouter(prefix="/api", tags=["poster"])
@@ -19,7 +20,8 @@ async def create_poster(request: PosterRequest):
     1. Capture website screenshot
     2. Analyze with Gemini Vision AI
     3. Generate poster with Flux AI
-    4. Upload to ImgBB for permanent hosting
+    4. Add brand overlay with Pillow
+    5. Upload to ImgBB for permanent hosting
     
     Args:
         request: PosterRequest with URL
@@ -37,12 +39,19 @@ async def create_poster(request: PosterRequest):
         # Step 3: Generate poster with Flux
         poster_path = await generate_poster(analysis)
         
-        # Step 4: Upload to ImgBB
-        poster_url = await upload_to_imgbb(poster_path)
+        # Step 4: Add brand name overlay with Pillow
+        brand_name = analysis.get('brand_name', 'BRAND')
+        color_palette = analysis.get('color_palette', {})
+        primary_color = color_palette.get('primary', '#FFFFFF')
+        
+        final_poster_path = add_brand_overlay(poster_path, brand_name, primary_color)
+        
+        # Step 5: Upload to ImgBB
+        poster_url = await upload_to_imgbb(final_poster_path)
         
         return PosterResponse(
             poster_url=poster_url,
-            analysis=f"{analysis.get('title', 'Brand')}: {analysis.get('atmosphere', '')}"
+            analysis=f"{brand_name}: {analysis.get('what_they_do', '')}"
         )
         
     except Exception as e:

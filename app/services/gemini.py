@@ -27,74 +27,73 @@ async def analyze_with_gemini(screenshot_path: str) -> dict:
     img = Image.open(screenshot_path)
     
     prompt = """
-You are a **World-Class Brand Visualizer & Marketing Strategist**.
-Your mission: Analyze the website screenshot and create a POWERFUL visual concept that captures the brand's CORE IDENTITY.
+You are a **Commercial Poster Art Director**.
+Analyze this website screenshot and design a visual concept for a brand poster.
 
-*** CRITICAL: WHAT DO YOU SEE? ***
+=== STEP 1: READ THE WEBSITE (MANDATORY) ===
 
-**PHASE 1: OCR & BUSINESS ANALYSIS**
-1. **Read Everything on Screen:**
-   - Main headline/tagline
-   - Menu items, buttons
-   - What images/products are shown?
-
-2. **Determine the EXACT Business:**
-   - What do they SELL or PROVIDE?
-   - Who is the TARGET USER?
+1. **What text do you see?**
+   - Headlines, menu items, buttons, taglines
    
-   **BE HYPER-SPECIFIC:**
-   - ❌ BAD: "Tech company" 
-   - ✅ GOOD: "Search engine with AI assistant, email, cloud storage, maps"
-   
-   - ❌ BAD: "Fashion store"
-   - ✅ GOOD: "Korean streetwear e-commerce selling hoodies, sneakers, and accessories"
+2. **What is this website FOR?** (Be SPECIFIC)
+   - ❌ WRONG: "It's a tech company"
+   - ✅ RIGHT: "Team collaboration tool with chat, file sharing, task management, and scheduling"
 
-**PHASE 2: BRAND VISUAL IDENTITY**
-1. **Brand Name:** (If Korean, romanize: '무신사' -> 'MUSINSA')
-2. **Logo Colors:** 
-   - Is it MULTI-COLOR? (like Google: Blue, Red, Yellow, Green) 
-   - Or SINGLE COLOR? (like Facebook Blue, Naver Green)
+3. **Brand name?** (Romanize Korean: 무신사→MUSINSA, 포커스허브→FOCUSHUB)
 
-**PHASE 3: VISUAL SCENE DESIGN**
+4. **Main color?** (Extract the dominant color from the logo/design)
 
-Design a scene that SHOWS what they do WITHOUT relying on text.
+=== STEP 2: DESIGN THE POSTER SCENE ===
 
-**Examples of GOOD Visual Scenes:**
+**CRITICAL RULE**: The poster must VISUALLY REPRESENT what the company DOES.
 
-* **Google (Search/AI):**
-  - "A futuristic command center with floating holographic search interfaces, glowing blue/red/yellow/green data streams flowing through the air, massive holographic screens showing search results, maps, emails, and AI chat bubbles. Clean white and chrome environment."
+**Examples of CORRECT visual translation:**
 
-* **Musinsa (Fashion E-commerce):**
-  - "A massive high-fashion warehouse with thousands of trendy clothes (hoodies, sneakers, jackets) organized on sleek white shelves, dramatic overhead spotlights, clean concrete floor reflecting the lights. A giant glowing sign in the background."
+📁 **Productivity Tool (FocusHub, Notion, Slack):**
+- SHOW: Floating glass panels with app icons (folder, chat bubble, checklist, calendar)
+- SHOW: Clean desk setup with organized digital screens
+- SHOW: Minimalist workspace with transparent UI elements
+- COLOR: Blue/white/gray tones (professional, clean)
+- MOOD: Organized, calm, productive
 
-* **FocusHub (Productivity Tool):**
-  - "A pristine digital workspace floating in deep blue space. Transparent glass panels displaying: a file folder icon, a chat bubble icon, a checklist icon, a calendar icon. Everything perfectly aligned in symmetry with soft blue glow."
+👕 **Fashion E-commerce (Musinsa, Zara):**
+- SHOW: Clothing items spread on floor or hanging on racks
+- SHOW: Sneakers, hoodies, jackets arranged artistically
+- SHOW: Fashion photography studio setup
+- COLOR: Black/white with accent colors
+- MOOD: Trendy, stylish, premium
 
-* **Coupang (Fast Delivery):**
-  - "A hyper-speed logistics tunnel with thousands of cardboard boxes flying past in motion blur. Neon light trails. Futuristic conveyor belts. Speed lines everywhere."
+🔍 **Search Engine / Tech (Google, Naver):**
+- SHOW: Holographic search interfaces, data visualization
+- SHOW: Flowing data streams, connected nodes
+- SHOW: Futuristic command center with screens
+- COLOR: Brand's signature colors (Google: blue/red/yellow/green)
+- MOOD: Intelligent, connected, powerful
 
-**PHASE 4: TEXT STRATEGY (CRITICAL)**
+📦 **Delivery / Logistics (Coupang, Amazon):**
+- SHOW: Flying boxes with motion blur
+- SHOW: Futuristic warehouse conveyor systems
+- SHOW: Speed lines, delivery trucks, packages
+- COLOR: Brand colors with dynamic lighting
+- MOOD: Fast, efficient, massive scale
 
-Since AI image generators struggle with text, describe where a sign/logo WOULD be placed:
-- "A large glowing sign area in the center-top of the image"
-- "A prominent display board in the scene"
+=== STEP 3: OUTPUT ===
 
---------------------------------------------------------------------------------
+Think carefully about what the website actually PROVIDES, then describe a scene that SHOWS it.
 
-*** OUTPUT FORMAT (JSON ONLY) ***
 {
-  "brand_name": "ENGLISH brand name (romanized if Korean)",
-  "what_they_do": "Specific description: what they sell/provide + target users (25 words max)",
-  "visual_scene": "DETAILED description of the scene that represents their business (50+ words, be CONCRETE with objects, colors, lighting)",
+  "brand_name": "ENGLISH name (romanized if Korean)",
+  "what_they_do": "Specific description of their service/product (20 words)",
+  "poster_scene": "CONCRETE description of objects in the poster (40+ words). List actual objects: 'floating glass panels showing folder icon, chat bubble icon, checklist icon, calendar icon, arranged in a 2x2 grid, deep blue gradient background, soft white glow'",
   "color_palette": {
-    "primary": "#hex",
-    "secondary": ["#hex1", "#hex2"] 
+    "primary": "#hexcode",
+    "secondary": ["#hex1", "#hex2"]
   },
-  "mood": "The emotional feel (e.g., 'High-tech futuristic', 'Premium fashion', 'Clean productive')",
-  "key_objects": ["object1", "object2", "object3", "object4", "object5"]
+  "mood": "2-3 word mood description",
+  "objects_list": ["object1", "object2", "object3", "object4"]
 }
 
-**Output JSON ONLY. No explanations.**
+**JSON ONLY. No other text.**
 """
     
     response = model.generate_content([prompt, img])
