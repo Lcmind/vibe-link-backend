@@ -1,0 +1,27 @@
+# VIBE_LINK Backend - Production Dependencies
+# Optimized for minimal footprint and fast builds
+
+# Core Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Headless Browser (Screenshot)
+pyppeteer==1.0.2
+
+# AI & Image Generation
+google-generativeai==0.3.2
+huggingface-hub==0.20.3
+
+# Image Processing
+Pillow==10.2.0
+
+# HTTP & API Requests
+requests==2.31.0
+httpx==0.26.0
+
+# Environment & Configuration
+python-dotenv==1.0.1
+
+# Async Support (optional optimization)
+aiofiles==23.2.1
