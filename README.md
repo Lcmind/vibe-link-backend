@@ -1,7 +1,7 @@
 ---
 title: VIBE_LINK Server
 emoji: 🎨
-colorFrom: black
+colorFrom: gray
 colorTo: green
 sdk: docker
 pinned: false
