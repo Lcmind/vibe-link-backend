@@ -42,11 +42,14 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 WORKDIR /app
 RUN chmod 777 /app
 
+# Install uv (ultra-fast Python package installer)
+RUN pip install --no-cache-dir uv
+
 # Copy dependency files first (layer caching optimization)
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies with uv (10-100x faster than pip)
+RUN uv pip install --system --no-cache -r requirements.txt
 
 # Copy application code
 COPY . .
