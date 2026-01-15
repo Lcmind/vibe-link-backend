@@ -27,15 +27,32 @@ async def generate_poster(analysis: dict) -> str:
     keywords = ', '.join(analysis.get('keywords', ['modern', 'minimal']))
     
     prompt = f"""
-Professional brand poster design for "{title}".
-Atmosphere: {atmosphere}
-Style: Abstract, geometric, minimalist, high-end branding
-Color palette: {primary_color} and {accent_color}
-Elements: {keywords}
-Composition: Centered, balanced, luxury brand aesthetic
-Quality: 8K, ultra-detailed, professional graphic design, award-winning
+A high-fashion square poster design (1:1 ratio). 
+
+VISUAL CONCEPT:
+- Brand essence: {title}
+- Atmosphere: {atmosphere}
+- Abstract metaphor representing the service (NOT website UI)
+- NO buttons, NO browser elements, NO screenshots
+
+TEXT INTEGRATION:
+- Render "{title}" as a physical 3D object in the scene
+- Style options: Neon sign, Gold engraving, Concrete letters, Holographic floating text
+- Position: Center or top-center, bold typography
+- ENGLISH ONLY (no Korean characters)
+
+COLOR PALETTE:
+- Primary: {primary_color}
+- Accent: {accent_color}
+- Professional gradient or solid backgrounds
+
+STYLE & QUALITY:
+- Abstract, geometric, minimalist luxury branding
+- Keywords: {keywords}
+- Unreal Engine 5 render, 8K, volumetric lighting
+- Cinematic composition, award-winning design
+- Professional graphic design aesthetic
 """
-    
     negative_prompt = "text, letters, words, typography, watermark, signature, blurry, low quality, photograph, realistic, 3d render"
     
     # Use new HF router endpoint directly

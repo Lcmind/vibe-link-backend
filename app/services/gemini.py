@@ -27,25 +27,38 @@ async def analyze_with_gemini(screenshot_path: str) -> dict:
     img = Image.open(screenshot_path)
     
     prompt = """
-당신은 세계적인 Creative Director입니다. 이 웹사이트 스크린샷을 분석하여, 
-브랜드의 "바이브(vibe)"를 단 한 장의 포스터로 표현하기 위한 크리에이티브 전략을 제시하세요.
+You are an **Elite Visual UX Researcher & Brand Strategist**.
+Your mission is to perform a "Deep Contextual Analysis" of the provided website screenshot.
 
-다음 형식의 JSON으로 정확히 답변하세요:
+*** CORE TASK: READ THE SOUL OF THE SERVICE ***
+Do not just look at the colors. You must **READ the text (OCR)** and **INTERPRET the purpose**.
+
+1. **OCR & Context Extraction (MANDATORY):**
+   - Read the Headline (H1), Sub-headline, and Buttons.
+   - **Answer this:** What problem does this service solve?
+     - *Example:* If text says "Track your time", the essence is **"EFFICIENCY & FLOW"**.
+     - *Example:* If text says "Premium Leather", the essence is **"CRAFTSMANSHIP & LUXURY"**.
+     - *Example:* If text says "Shin Ramyun", the essence is **"SPICY & ENERGY"**.
+
+2. **Target Audience Profiling:**
+   - Who uses this? (Gamers? CEOs? Parents? Developers?)
+   - The final visual must appeal to their specific taste.
+
+3. **Brand Identity Decoding:**
+   - **Name:** Find the logo or brand name.
+     - **RULE:** If Korean (Hangul) is detected, **Translate/Romanize it to English** immediately. (e.g., '집중' -> 'FOCUS').
+   - **Color Psychology:** What mood do the colors convey? (Trust, Passion, Calm).
+
+*** OUTPUT FORMAT (JSON ONLY) ***
 {
-  "title": "브랜드를 대표하는 핵심 키워드 1-2단어 (영어)",
-  "atmosphere": "브랜드 무드를 시각적으로 묘사 (30단어 이내, 영어)",
-  "primary_color": "메인 컬러 (hex code)",
-  "accent_color": "포인트 컬러 (hex code)", 
-  "keywords": ["핵심 키워드1", "키워드2", "키워드3", "키워드4", "키워드5"]
+  "title": "Core brand keyword in 1-2 words (ENGLISH ONLY)",
+  "atmosphere": "Visual mood description in 30 words (ENGLISH)",
+  "primary_color": "Main color hex code",
+  "accent_color": "Accent color hex code",
+  "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"]
 }
 
-분석 기준:
-- 브랜드 정체성: 로고, 타이포그래피, 컬러 시스템
-- 감성 톤: 차분함/에너지틱, 프로페셔널/친근함 등
-- 시각 요소: 주요 색상, 레이아웃 스타일, 이미지 톤
-- 타겟층: 추정되는 사용자 특성
-
-JSON만 출력하세요. 다른 텍스트는 포함하지 마세요.
+**Output JSON ONLY. No extra text.**
 """
     
     response = model.generate_content([prompt, img])
