@@ -41,27 +41,27 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # HF Spaces requirement: Create user with UID 1000
 RUN useradd -m -u 1000 user
 
-# Switch to user
+# Set working directory
+WORKDIR /app
+
+# Copy requirements
+COPY --chown=user requirements.txt .
+
+# Install dependencies (as root, faster)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY --chown=user . /app
+
+# Switch to user AFTER all installs
 USER user
 
-# Set home and PATH for user
+# Set user environment
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH
 
-# Set working directory
-WORKDIR $HOME/app
-
-# Copy requirements with proper ownership
-COPY --chown=user requirements.txt .
-
-# Install Python dependencies as user
-RUN pip install --no-cache-dir --user -r requirements.txt
-
-# Copy application code
-COPY --chown=user . .
-
-# Expose Hugging Face Spaces port
+# Expose port
 EXPOSE 7860
 
-# Run FastAPI with python -m uvicorn (ensures PATH works correctly)
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Run FastAPI
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
