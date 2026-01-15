@@ -27,7 +27,7 @@ async def generate_poster(analysis: dict) -> str:
     keywords = ', '.join(analysis.get('keywords', ['modern', 'minimal']))
     
     prompt = f"""
-A high-fashion square poster design (1:1 ratio). 
+A high-fashion vertical poster design (9:16 ratio, 768x1344px). 
 
 VISUAL CONCEPT:
 - Brand essence: {title}
@@ -65,10 +65,10 @@ STYLE & QUALITY:
         "inputs": prompt,
         "parameters": {
             "negative_prompt": negative_prompt,
-            "num_inference_steps": settings.flux_steps,
-            "guidance_scale": 0.0,
-            "width": 1024,
-            "height": 1024,
+            "num_inference_steps": 28,  # Higher steps for better quality
+            "guidance_scale": 3.5,  # Optimal balance for detail and prompt adherence
+            "width": 768,   # 9:16 ratio width
+            "height": 1344, # 9:16 ratio height (optimal for Flux Dev)
         }
     }
     
