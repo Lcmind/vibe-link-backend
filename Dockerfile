@@ -38,21 +38,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-# Create app directory with proper permissions
-WORKDIR /app
-RUN chmod 777 /app
+# HF Spaces requirement: Create user with UID 1000
+RUN useradd -m -u 1000 user
 
-# Install uv (ultra-fast Python package installer)
-RUN pip install --no-cache-dir uv
+# Switch to user
+USER user
 
-# Copy dependency files first (layer caching optimization)
-COPY requirements.txt .
+# Set home and PATH for user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
 
-# Install Python dependencies with uv (10-100x faster than pip)
-RUN uv pip install --system --no-cache -r requirements.txt
+# Set working directory
+WORKDIR $HOME/app
 
-# Copy application code
-COPY . .
+# Install uv for the user
+RUN pip install --no-cache-dir --user uv
+
+# Copy requirements with proper ownership
+COPY --chown=user requirements.txt .
+
+# Run FastAPI on port 7860 with proxy headers
 
 # Expose Hugging Face Spaces port
 EXPOSE 7860
