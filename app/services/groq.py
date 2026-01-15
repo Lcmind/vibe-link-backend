@@ -65,15 +65,31 @@ Extract key information to create a poster that VISUALLY REPRESENTS what this co
         "Content-Type": "application/json"
     }
     payload = {
-        "model": settings.groq_model,
-        "messages": [
-            {"role": "system", "content": "You are a world-class creative director and brand analyst."},
-            {"role": "user", "content": prompt},
-            {"role": "user", "content": {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{img_b64}"}}}
-        ],
-        "max_tokens": 1024,
-        "temperature": 0.2
-    }
+    "model": settings.groq_model, # 반드시 llama-3.2-11b-vision-preview 등 비전 모델이어야 함
+    "messages": [
+        {
+            "role": "system", 
+            "content": "You are a world-class creative director and brand analyst."
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text", 
+                    "text": prompt
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{img_b64}"
+                    }
+                }
+            ]
+        }
+    ],
+    "max_tokens": 1024,
+    "temperature": 0.2
+}
     async with httpx.AsyncClient(timeout=60.0) as client:
         response = await client.post(url, headers=headers, json=payload)
         response.raise_for_status()
