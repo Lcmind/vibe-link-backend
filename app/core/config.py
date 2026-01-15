@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     gemini_model: str = "gemma-3-27b-it"
     groq_model: str = "meta-llama/llama-4-maverick-17b-128e-instruct"
     
+    # Qwen Model (멀티모달)
+    qwen_model: str = "Qwen/Qwen3-VL-32B-Instruct"  # 32B 모델로 교체
+
     # Pyppeteer Settings
     puppeteer_executable_path: str = "/usr/bin/chromium"
     puppeteer_args: List[str] = [
@@ -46,8 +49,8 @@ class Settings(BaseSettings):
         "--disable-gpu",
     ]
     
-    # 분석 모델 선택: "gemini" 또는 "groq"
-    analysis_model: str = "groq"  # 또는 "gemini"
+    # 분석 모델 선택: "gemini", "groq", "qwen"
+    analysis_model: str = "qwen"  # "gemini", "groq", "qwen" 중 선택
     
     class Config:
         env_file = ".env"
