@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     flux_steps: int = 20
     
     # Gemini Model - 2.5-flash
-    gemini_model: str = "gemma-3-27b"
+    gemini_model: str = "gemma-3-27b-it"
     
     # Pyppeteer Settings
     puppeteer_executable_path: str = "/usr/bin/chromium"
