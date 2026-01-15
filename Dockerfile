@@ -51,20 +51,17 @@ ENV HOME=/home/user \
 # Set working directory
 WORKDIR $HOME/app
 
-# Install uv for the user
-RUN pip install --no-cache-dir --user uv
-
 # Copy requirements with proper ownership
 COPY --chown=user requirements.txt .
 
-# Run FastAPI on port 7860 with proxy headers
+# Install Python dependencies as user
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Copy application code
+COPY --chown=user . .
 
 # Expose Hugging Face Spaces port
 EXPOSE 7860
 
-# Health check for container monitoring
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:7860/', timeout=5)"
-
-# Run FastAPI directly on port 7860 with proxy headers support
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860", "--proxy-headers", "--forwarded-allow-ips", "*"]
+# Run FastAPI with python -m uvicorn (ensures PATH works correctly)
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
