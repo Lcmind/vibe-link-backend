@@ -58,7 +58,8 @@ USER user
 
 # Set user environment
 ENV HOME=/home/user \
-    PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:$PATH \
+    PYTHONPATH=/app
 
 # Expose port
 EXPOSE 7860
