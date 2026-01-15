@@ -6,9 +6,6 @@ fastapi==0.115.0
 uvicorn[standard]==0.32.0
 python-multipart==0.0.12
 
-# Gradio (HF Spaces requirement)
-gradio==6.3.0
-
 # Headless Browser (Screenshot)
 pyppeteer==1.0.2
 

@@ -59,7 +59,7 @@ EXPOSE 7860
 
 # Health check for container monitoring
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:7860/health', timeout=5)"
+    CMD python -c "import requests; requests.get('http://localhost:7860/', timeout=5)"
 
-# Run Gradio wrapper (which includes FastAPI)
-CMD ["python", "app.py"]
+# Run FastAPI directly on port 7860 (HF Spaces standard)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
