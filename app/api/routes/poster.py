@@ -41,17 +41,17 @@ async def create_poster(request: PosterRequest):
         
         # Step 4: Add brand name overlay with Pillow
         brand_name = analysis.get('brand_name', 'BRAND')
-        color_palette = analysis.get('color_palette', {})
-        primary_color = color_palette.get('primary', '#FFFFFF')
+        primary_color = analysis.get('primary_color', '#FFFFFF')
+        mood = analysis.get('mood', 'Clean')
         
-        final_poster_path = add_brand_overlay(poster_path, brand_name, primary_color)
+        final_poster_path = add_brand_overlay(poster_path, brand_name, primary_color, mood)
         
         # Step 5: Upload to ImgBB
         poster_url = await upload_to_imgbb(final_poster_path)
         
         return PosterResponse(
             poster_url=poster_url,
-            analysis=f"{brand_name}: {analysis.get('what_they_do', '')}"
+            analysis=f"{brand_name}: {analysis.get('what_they_provide', '')}"
         )
         
     except Exception as e:

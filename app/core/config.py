@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     debug: bool = False
     
     # Hugging Face Models - use stable-diffusion instead of FLUX
-    flux_model: str = "stabilityai/stable-diffusion-xl-base-1.0"
+    flux_model: str = "black-forest-labs/FLUX.1-schnell"
     flux_steps: int = 20
     
     # Gemini Model - 2.5-flash

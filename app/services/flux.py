@@ -8,7 +8,7 @@ from app.core.config import settings
 
 async def generate_poster(analysis: dict) -> str:
     """
-    Generate a poster using Flux AI based on analysis.
+    Generate a poster using Flux.1-schnell based on analysis.
     
     Args:
         analysis: Analysis results from Gemini
@@ -19,71 +19,52 @@ async def generate_poster(analysis: dict) -> str:
     Raises:
         Exception: If generation fails
     """
-    # Construct detailed prompt for Flux
-    brand_name = analysis.get('brand_name', 'BRAND')
-    what_they_do = analysis.get('what_they_do', 'service')
-    poster_scene = analysis.get('poster_scene', 'modern clean design')
-    color_palette = analysis.get('color_palette', {'primary': '#4A90D9', 'secondary': []})
-    mood = analysis.get('mood', 'professional')
-    objects_list = analysis.get('objects_list', ['modern design elements'])
+    # Extract analysis data with new schema
+    business_type = analysis.get('business_type', 'Productivity')
+    poster_objects = analysis.get('poster_objects', 'modern workspace elements')
+    background_style = analysis.get('background_style', 'Clean gradient')
+    primary_color = analysis.get('primary_color', '#4A90D9')
+    mood = analysis.get('mood', 'Clean')
     
-    primary_color = color_palette.get('primary', '#4A90D9')
-    secondary_colors = color_palette.get('secondary', [])
+    # === 10-YEAR PROMPT ENGINEER'S PERFECT PROMPT STRUCTURE ===
+    # 
+    # Rule 1: Start with medium and format
+    # Rule 2: Subject first, then style
+    # Rule 3: Be concrete, not abstract
+    # Rule 4: Quality tags at the end
+    # Rule 5: Negative prompt blocks unwanted elements
     
-    # Build specific color instruction
-    if secondary_colors and len(secondary_colors) > 1:
-        all_colors = [primary_color] + secondary_colors
-        color_instruction = f"Color scheme using {', '.join(all_colors)} as accent colors throughout the scene"
-    else:
-        color_instruction = f"Color scheme dominated by {primary_color} with white and dark accents"
-    
-    # Build objects description
-    objects_desc = ', '.join(objects_list) if objects_list else 'clean design elements'
-    
-    prompt = f"""
-Commercial brand poster, vertical 9:16 aspect ratio.
+    prompt = f"""Commercial photography poster, vertical composition, 9:16 aspect ratio.
 
-SCENE DESCRIPTION:
-{poster_scene}
+Subject: {poster_objects}, arranged aesthetically in frame.
 
-KEY OBJECTS TO INCLUDE:
-{objects_desc}
+Environment: {background_style} background, professional studio setup, {mood.lower()} atmosphere.
 
-COLOR AND LIGHTING:
-{color_instruction}
-{mood} atmosphere
-Professional studio lighting, soft shadows, cinematic depth
+Lighting: Soft diffused studio lighting, subtle shadows, {primary_color} color accents in the scene.
 
-STYLE REQUIREMENTS:
-- Clean, modern, minimalist composition
-- Professional advertising photography quality
-- High-end brand commercial aesthetic
-- NO text, NO words, NO letters in the image
-- Leave empty space at top center for logo placement
+Style: High-end advertising campaign, clean minimalist design, modern corporate aesthetic, magazine quality.
 
-TECHNICAL:
-- 8K resolution quality
-- Sharp focus throughout
-- Professional color grading
-- Magazine advertisement quality
-"""
+Composition: Empty space at top 15% of frame for text overlay, centered focal point, balanced layout.
+
+Quality: 8k resolution, sharp focus, professional color grading, commercial photography."""
     
-    negative_prompt = "text, words, letters, numbers, typography, watermark, signature, logo, brand name, writing, caption, label, blurry, low quality, amateur, messy, cluttered, chaotic, ugly, distorted, deformed, oversaturated, planets, space, galaxy, cosmos, moons, stars, universe"
+    # Optimized negative prompt - specific and targeted
+    negative_prompt = "text, words, letters, typography, watermark, logo, signature, blurry, noise, grainy, amateur, low quality, distorted, ugly, planets, space, galaxy, stars, cosmos, abstract art, random patterns, cluttered, messy, chaotic"
     
-    # Use new HF router endpoint directly
     headers = {
         "Authorization": f"Bearer {settings.hf_token}",
         "Content-Type": "application/json"
     }
     
+    # Flux.1-schnell optimal parameters
     payload = {
         "inputs": prompt,
         "parameters": {
             "negative_prompt": negative_prompt,
-            "num_inference_steps": 28,  # Higher steps for better quality
-            "guidance_scale": 3.5,  # Optimal balance for detail and prompt adherence
-            "width": 768,   # 9:16 ratio width
-            "height": 1344, # 9:16 ratio height (optimal for Flux Dev)
+            "num_inference_steps": 4,  # Schnell is optimized for 4 steps
+            "guidance_scale": 0.0,     # Schnell uses guidance_scale 0
+            "width": 768,
+            "height": 1344,
         }
     }
     
