@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     # CORS Origins - 환경에 따라 동적 설정
     allowed_origins: List[str] = [
         "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
         "http://localhost:5173",
         "https://vibe-link.vercel.app",  # 향후 프로덕션 도메인
     ]
@@ -26,9 +28,9 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
     debug: bool = False
     
-    # Hugging Face Models
-    flux_model: str = "black-forest-labs/FLUX.1-schnell"
-    flux_steps: int = 4
+    # Hugging Face Models - use stable-diffusion instead of FLUX
+    flux_model: str = "stabilityai/stable-diffusion-xl-base-1.0"
+    flux_steps: int = 20
     
     # Gemini Model - 2.5-flash
     gemini_model: str = "gemini-2.5-flash"
