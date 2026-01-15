@@ -27,45 +27,74 @@ async def analyze_with_gemini(screenshot_path: str) -> dict:
     img = Image.open(screenshot_path)
     
     prompt = """
-You are a **Legendary Marketing CEO & Creative Director**.
-Your mission is to translate a website screenshot into a **High-End Commercial Brand Poster** that captures the absolute "Essence" of the business.
+You are a **World-Class Brand Strategist & Visual Translator**.
+Your mission: Analyze the website screenshot and create a SPECIFIC visual concept for a commercial poster.
 
-*** PHASE 1: BUSINESS INTELLIGENCE (The CEO's Insight) ***
-Read the text, UI, and context to determine the **Business Model**.
+*** CRITICAL INSTRUCTIONS ***
 
-1. **IDENTIFY THE CATEGORY & METAPHOR:**
-   - **Fashion/Commerce (e.g., Musinsa, Chanel):** - *Essence:* Style, Trend, Elegance.
-     - *Visual Metaphor:* Infinite runway, floating silk fabrics, high-end showroom, mannequins.
-   - **Logistics/Delivery (e.g., Coupang, FedEx):** - *Essence:* Speed, Motion, Scale.
-     - *Visual Metaphor:* Motion blur lines, flying boxes, futuristic warehouse tunnel, fast trucks.
-   - **Tech/AI/Search (e.g., Google, Naver):** - *Essence:* Intelligence, Data, Connection.
-     - *Visual Metaphor:* Digital brain, glowing neural nodes, fiber optic cables, infinite library of light.
-   - **Productivity/SaaS (e.g., FocusHub, Notion):** - *Essence:* Clarity, Order, Flow.
-     - *Visual Metaphor:* Perfect geometric glass cubes, zen garden, assembling structures, clean water surface.
-   - **Luxury/Perfume:** - *Essence:* Scent, Nature, Premium.
-     - *Visual Metaphor:* Marble stone, flowers, gold accents, water ripples, soft sunlight.
+**PHASE 1: DEEP BUSINESS ANALYSIS (What do they actually DO?)**
 
-2. **EXTRACT BRAND IDENTITY (CRITICAL):**
-   - **Brand Name:** Find the logo. **MANDATORY:** If Korean, Romanize/Translate to English (e.g., '무신사' -> 'MUSINSA').
-   - **Brand Color:** Identify the dominant color to set the lighting mood.
+1. **READ THE SCREEN (OCR is MANDATORY):**
+   - What is the MAIN headline/tagline?
+   - What buttons/menus do you see? (e.g., "Shop Now", "Search", "Sign In", "Upload File", "Team Chat")
+   - What images/icons are visible? (clothes, search bar, charts, food, etc.)
 
-*** PHASE 2: VISUAL STRATEGY (The Director's Vision) ***
-- **Rule 1: TEXT IS HERO.** The Brand Name is not just a caption. It is the **Main 3D Art Piece** in the center.
-- **Rule 2: MATERIALITY.** Define what the text is made of (Neon, Gold, Concrete, Cloud, Metal) based on the category.
+2. **DETERMINE THE CORE OFFERING (BE SPECIFIC):**
+   - **BAD (Too Generic):** "It's a tech company."
+   - **GOOD (Precise):** "It's a cloud storage service for file sharing" OR "It's a fashion e-commerce selling streetwear."
+   
+   Examples:
+   - **Musinsa (무신사):** "Fashion e-commerce platform selling Korean streetwear and sneakers."
+   - **Google:** "Global search engine with AI, cloud services, and productivity tools."
+   - **FocusHub:** "Team productivity hub with file library, team chat, agenda, and task management."
+   - **Coupang:** "Fast delivery e-commerce with rocket shipping."
+
+3. **EXTRACT VISUAL SIGNATURE:**
+   - **Brand Name:** (Korean -> Romanize. e.g., '무신사' -> 'MUSINSA')
+   - **Logo Color Palette:** What are the EXACT colors? (Single color like #4285F4 Blue, or Multi-color like Google's Blue/Red/Yellow/Green)
+
+--------------------------------------------------------------------------------
+
+**PHASE 2: VISUAL METAPHOR CREATION (Turn offering into IMAGE)**
+
+Based on what you found, define the CONCRETE VISUAL ELEMENTS for the poster.
+
+**Rules:**
+- **DO NOT use generic templates** (e.g., "abstract tech background").
+- **BE HYPER-SPECIFIC** to what the brand sells/provides.
+
+**Examples:**
+
+* **Musinsa (Fashion E-Commerce):**
+  - Visual: "Hundreds of trendy clothing items (hoodies, sneakers, jackets) arranged in a grid pattern on a clean white studio floor, with soft spotlights from above."
+  - Brand Text Material: "The word 'MUSINSA' in bold black modern sans-serif, standing upright as a physical 3D sign on the floor."
+
+* **Google (Search/AI/Cloud):**
+  - Visual: "A vast digital universe with flowing streams of colorful light (blue, red, yellow, green) representing search queries and data, converging into a glowing search bar in the center."
+  - Brand Text Material: "The word 'Google' in its signature multi-colored letters (Blue G, Red o, Yellow o, Blue g, Green l, Red e), rendered as glowing 3D neon tubes floating in space."
+
+* **FocusHub (Productivity Tool):**
+  - Visual: "A clean organized digital workspace with floating transparent glass panels showing icons of: file folder, chat bubble, checklist, calendar. Everything is aligned in perfect symmetry with a deep blue gradient background."
+  - Brand Text Material: "The word 'FOCUSHUB' in glowing blue neon letters, positioned center-top."
+
+* **Coupang (Fast Delivery):**
+  - Visual: "Hundreds of cardboard boxes flying through a futuristic tunnel with motion blur trails, representing hyper-speed logistics."
+  - Brand Text Material: "The word 'COUPANG' in bold white letters on the side of a large delivery box."
+
+--------------------------------------------------------------------------------
 
 *** OUTPUT FORMAT (JSON ONLY) ***
 {
-  "title": "Brand name in ENGLISH (romanized if Korean)",
-  "category": "One of: Fashion, Logistics, Tech, Productivity, Luxury, Creative",
-  "business_essence": "Core value in 3-5 words (e.g., 'Speed, Motion, Scale')",
-  "visual_metaphor": "Concrete scene description (e.g., 'flying boxes and motion blur lines')",
-  "text_material": "Material for brand text (e.g., 'glowing neon tubes', 'gold engraving', 'concrete letters')",
-  "primary_color": "Main color hex code (from website)",
-  "accent_color": "Accent color hex code",
+  "brand_name": "Brand name in ENGLISH (romanized if Korean)",
+  "core_offering": "Specific description of what they provide (20 words max)",
+  "visual_scene": "Detailed description of the poster's background environment (40 words, be CONCRETE)",
+  "brand_text_material": "How the brand name appears as a 3D object (e.g., 'glowing blue neon', 'black modern signage', 'multi-colored glass letters')",
+  "primary_color": "Main brand color hex code",
+  "secondary_colors": "Array of additional brand colors if multi-color logo (e.g., ['#4285F4', '#EA4335', '#FBBC04', '#34A853'] for Google), or empty [] if single color",
   "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"]
 }
 
-**Output JSON ONLY. No extra text.**
+**Output JSON ONLY. No explanations.**
 """
     
     response = model.generate_content([prompt, img])

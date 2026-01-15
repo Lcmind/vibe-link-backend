@@ -20,44 +20,51 @@ async def generate_poster(analysis: dict) -> str:
         Exception: If generation fails
     """
     # Construct detailed prompt for Flux
-    title = analysis.get('title', 'BRAND')
-    category = analysis.get('category', 'Tech')
-    business_essence = analysis.get('business_essence', 'modern and innovative')
-    visual_metaphor = analysis.get('visual_metaphor', 'abstract geometric shapes')
-    text_material = analysis.get('text_material', 'glowing neon tubes')
+    brand_name = analysis.get('brand_name', 'BRAND')
+    core_offering = analysis.get('core_offering', 'innovative service')
+    visual_scene = analysis.get('visual_scene', 'modern abstract background')
+    brand_text_material = analysis.get('brand_text_material', 'glowing neon letters')
     primary_color = analysis.get('primary_color', '#000000')
-    accent_color = analysis.get('accent_color', '#FFFFFF')
-    keywords = ', '.join(analysis.get('keywords', ['modern', 'minimal']))
+    secondary_colors = analysis.get('secondary_colors', [])
+    keywords = ', '.join(analysis.get('keywords', ['modern', 'professional']))
+    
+    # Build color description
+    if secondary_colors and len(secondary_colors) > 0:
+        color_desc = f"multi-colored ({', '.join(secondary_colors)})"
+    else:
+        color_desc = f"in {primary_color} color scheme"
     
     prompt = f"""
-A high-end vertical commercial poster (9:16 aspect ratio, 768x1344px). 
+A high-end vertical commercial poster (9:16 aspect ratio, 768x1344px).
 
-THE HERO SUBJECT (TEXT MASTERY):
-The text '{title}' is the main masterpiece of the image.
-The text '{title}' is made of {text_material}.
-Typography-centric design, Big Bold Legible Text, positioned in the center or top-center.
+THE HERO TEXT (BRAND NAME AS THE CENTERPIECE):
+The text '{brand_name}' is the main focal point of the image.
+The text is rendered as: {brand_text_material}
+The text colors: {color_desc}
+Typography: Bold, big, legible, positioned prominently (center or top-center).
 
-THE CINEMATIC ENVIRONMENT (BUSINESS METAPHOR):
-Category: {category}
-Business essence: {business_essence}
-Surrounded by: {visual_metaphor}
+THE VISUAL SCENE (REPRESENTING WHAT THEY DO):
+Core business: {core_offering}
+Background environment: {visual_scene}
 
-LIGHTING & COLOR:
-- Primary color mood: {primary_color}
-- Accent highlights: {accent_color}
-- Cinematic lighting, dramatic atmosphere
-- Professional commercial photography style
-
-STYLE & QUALITY:
+STYLE & ATMOSPHERE:
+- Cinematic commercial photography
 - Keywords: {keywords}
-- 8K resolution, Unreal Engine 5, Octane Render
-- Award-winning commercial poster design
-- Clean composition, no UI elements, no browser bars
+- Volumetric lighting, dramatic depth of field
+- Clean composition, professional aesthetic
 
-ENGLISH TEXT ONLY (no Korean characters).
+TECHNICAL QUALITY:
+- 8K resolution, Unreal Engine 5 render
+- Octane Render, Ray Tracing, Super-Resolution
+- Award-winning commercial poster design
+
+STRICT RULES:
+- NO UI elements, NO browser bars, NO website screenshots
+- Text must be in ENGLISH only (no Korean characters)
+- Focus on brand essence through visual metaphor
 """
     
-    negative_prompt = "messy UI elements, browser bars, glitch errors, blurry, low quality, watermark, signature, cluttered, chaotic, random text, small text, unreadable text"
+    negative_prompt = "UI elements, browser interface, website screenshot, messy layout, cluttered, blurry, low quality, watermark, signature, small unreadable text, random Korean text, chaotic composition"
     
     # Use new HF router endpoint directly
     headers = {
