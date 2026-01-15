@@ -30,8 +30,8 @@ class Settings(BaseSettings):
     flux_model: str = "black-forest-labs/FLUX.1-schnell"
     flux_steps: int = 4
     
-    # Gemini Model
-    gemini_model: str = "gemini-2.0-flash-exp"
+    # Gemini Model - 2.5-flash
+    gemini_model: str = "gemini-2.5-flash"
     
     # Pyppeteer Settings
     puppeteer_executable_path: str = "/usr/bin/chromium"
