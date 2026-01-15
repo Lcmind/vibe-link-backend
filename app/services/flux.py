@@ -20,61 +20,44 @@ async def generate_poster(analysis: dict) -> str:
         Exception: If generation fails
     """
     # Construct detailed prompt for Flux
-    title = analysis.get('title', 'Brand')
-    category = analysis.get('category', 'Productivity')
-    hero_object = analysis.get('hero_object', 'a floating glass cube')
-    atmosphere = analysis.get('atmosphere', 'modern and clean aesthetic')
+    title = analysis.get('title', 'BRAND')
+    category = analysis.get('category', 'Tech')
+    business_essence = analysis.get('business_essence', 'modern and innovative')
+    visual_metaphor = analysis.get('visual_metaphor', 'abstract geometric shapes')
+    text_material = analysis.get('text_material', 'glowing neon tubes')
     primary_color = analysis.get('primary_color', '#000000')
     accent_color = analysis.get('accent_color', '#FFFFFF')
     keywords = ', '.join(analysis.get('keywords', ['modern', 'minimal']))
     
-    # Category-specific style rules
-    if category == 'Productivity':
-        style_keywords = "Apple Style, Dieter Rams, Frosted Glass, Soft Studio Lighting, Minimalist, Zen, Spacious, Air"
-        negative_additions = "NO cluttered elements, NO complex machinery, NO glitch effects, NO random messy lines"
-    elif category == 'Dev':
-        style_keywords = "Matrix style, Clean dark mode, Terminal aesthetic, Code-inspired"
-        negative_additions = ""
-    elif category == 'Creative':
-        style_keywords = "Colorful, Abstract, Artistic, Expressive"
-        negative_additions = ""
-    else:
-        style_keywords = "Modern, Professional, Clean"
-        negative_additions = ""
-    
     prompt = f"""
-A high-end vertical commercial poster design (9:16 aspect ratio, 768x1344px).
+A high-end vertical commercial poster (9:16 aspect ratio, 768x1344px). 
 
-COMPOSITION (MANDATORY):
-- **Center Composition:** Place '{hero_object}' in the center
-- **Negative Space:** Leave 40% of the image empty (clean background) to symbolize calmness
-- **Hero Object:** {hero_object}
+THE HERO SUBJECT (TEXT MASTERY):
+The text '{title}' is the main masterpiece of the image.
+The text '{title}' is made of {text_material}.
+Typography-centric design, Big Bold Legible Text, positioned in the center or top-center.
 
-BRAND TEXT:
-- The word '{title}' formed by a 3D object (glowing neon tube floating in air, or engraved in metal)
-- Font style: Swiss Typography, Clean Sans-serif
-- Position: Top-center or integrated with hero object
-- ENGLISH ONLY (no Korean characters)
+THE CINEMATIC ENVIRONMENT (BUSINESS METAPHOR):
+Category: {category}
+Business essence: {business_essence}
+Surrounded by: {visual_metaphor}
 
-COLOR PALETTE (STRICT):
-- Primary: {primary_color}
-- Accent: {accent_color}
-- Use gradients or solid backgrounds only
+LIGHTING & COLOR:
+- Primary color mood: {primary_color}
+- Accent highlights: {accent_color}
+- Cinematic lighting, dramatic atmosphere
+- Professional commercial photography style
 
-STYLE ENFORCERS:
-- {style_keywords}
+STYLE & QUALITY:
 - Keywords: {keywords}
-- Atmosphere: {atmosphere}
+- 8K resolution, Unreal Engine 5, Octane Render
+- Award-winning commercial poster design
+- Clean composition, no UI elements, no browser bars
 
-QUALITY BOOSTERS:
-- Unreal Engine 5, 8K, Octane Render, Ray Tracing
-- Super-Resolution, Anti-Aliasing
-- Cinematic composition, award-winning design
-
-CATEGORY: {category}
+ENGLISH TEXT ONLY (no Korean characters).
 """
     
-    negative_prompt = f"text, letters, words, typography, watermark, signature, blurry, low quality, photograph, realistic, 3d render, {negative_additions}"
+    negative_prompt = "messy UI elements, browser bars, glitch errors, blurry, low quality, watermark, signature, cluttered, chaotic, random text, small text, unreadable text"
     
     # Use new HF router endpoint directly
     headers = {

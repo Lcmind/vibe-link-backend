@@ -27,33 +27,39 @@ async def analyze_with_gemini(screenshot_path: str) -> dict:
     img = Image.open(screenshot_path)
     
     prompt = """
-You are a **Minimalist Brand Director** (think Apple or Dieter Rams style).
-Your mission is to analyze the website screenshot and extract its "Visual Soul" for a high-end poster.
+You are a **Legendary Marketing CEO & Creative Director**.
+Your mission is to translate a website screenshot into a **High-End Commercial Brand Poster** that captures the absolute "Essence" of the business.
 
-*** CRITICAL ANALYSIS PROTOCOL ***
+*** PHASE 1: BUSINESS INTELLIGENCE (The CEO's Insight) ***
+Read the text, UI, and context to determine the **Business Model**.
 
-1. **READ THE TEXT & CONTEXT (OCR):**
-   - Look for keywords: "Focus", "Task", "Simple", "Flow", "Team".
-   - **JUDGMENT:**
-     - If it's a **Productivity/Tool** (like FocusHub): The visual MUST be **Clean, Organized, Zen, Glass-like**. (FORBIDDEN: Chaos, messy wires, glitch art).
-     - If it's **Creative/Art**: Colorful and abstract is okay.
-     - If it's **Dev/Code**: Matrix style or clean dark mode is okay.
+1. **IDENTIFY THE CATEGORY & METAPHOR:**
+   - **Fashion/Commerce (e.g., Musinsa, Chanel):** - *Essence:* Style, Trend, Elegance.
+     - *Visual Metaphor:* Infinite runway, floating silk fabrics, high-end showroom, mannequins.
+   - **Logistics/Delivery (e.g., Coupang, FedEx):** - *Essence:* Speed, Motion, Scale.
+     - *Visual Metaphor:* Motion blur lines, flying boxes, futuristic warehouse tunnel, fast trucks.
+   - **Tech/AI/Search (e.g., Google, Naver):** - *Essence:* Intelligence, Data, Connection.
+     - *Visual Metaphor:* Digital brain, glowing neural nodes, fiber optic cables, infinite library of light.
+   - **Productivity/SaaS (e.g., FocusHub, Notion):** - *Essence:* Clarity, Order, Flow.
+     - *Visual Metaphor:* Perfect geometric glass cubes, zen garden, assembling structures, clean water surface.
+   - **Luxury/Perfume:** - *Essence:* Scent, Nature, Premium.
+     - *Visual Metaphor:* Marble stone, flowers, gold accents, water ripples, soft sunlight.
 
-2. **VISUAL ANCHOR (The Main Subject):**
-   - Don't just say "abstract background". Define a **Single "Hero Object"**.
-   - *Good Examples:* "A single perfect crystal cube", "A glowing ring of light", "A floating glass sheet".
-   - *Bad Examples:* "Complex city", "Random shapes", "Circuit board patterns".
+2. **EXTRACT BRAND IDENTITY (CRITICAL):**
+   - **Brand Name:** Find the logo. **MANDATORY:** If Korean, Romanize/Translate to English (e.g., '무신사' -> 'MUSINSA').
+   - **Brand Color:** Identify the dominant color to set the lighting mood.
 
-3. **BRAND IDENTITY:**
-   - **Name:** If Korean detected, Romanize it (e.g., '집중' -> 'FOCUS').
-   - **Color:** Strict adherence to the site's dominant color (e.g., Deep Blue -> keep it Blue/Indigo, don't add random Pink/Purple).
+*** PHASE 2: VISUAL STRATEGY (The Director's Vision) ***
+- **Rule 1: TEXT IS HERO.** The Brand Name is not just a caption. It is the **Main 3D Art Piece** in the center.
+- **Rule 2: MATERIALITY.** Define what the text is made of (Neon, Gold, Concrete, Cloud, Metal) based on the category.
 
 *** OUTPUT FORMAT (JSON ONLY) ***
 {
-  "title": "Core brand keyword in 1-2 words (ENGLISH ONLY)",
-  "category": "One of: Productivity, Creative, Dev, Commerce, Social",
-  "hero_object": "Single concrete visual element for the poster (e.g., 'floating glass cube')",
-  "atmosphere": "Visual mood description in 20 words (ENGLISH)",
+  "title": "Brand name in ENGLISH (romanized if Korean)",
+  "category": "One of: Fashion, Logistics, Tech, Productivity, Luxury, Creative",
+  "business_essence": "Core value in 3-5 words (e.g., 'Speed, Motion, Scale')",
+  "visual_metaphor": "Concrete scene description (e.g., 'flying boxes and motion blur lines')",
+  "text_material": "Material for brand text (e.g., 'glowing neon tubes', 'gold engraving', 'concrete letters')",
   "primary_color": "Main color hex code (from website)",
   "accent_color": "Accent color hex code",
   "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"]
