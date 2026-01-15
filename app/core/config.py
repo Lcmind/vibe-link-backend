@@ -3,15 +3,16 @@
 import os
 from typing import List
 from pydantic_settings import BaseSettings
+from pydantic import Field
 
 
 class Settings(BaseSettings):
     """Application settings with environment variable support."""
     
-    # API Keys
-    hf_token: str = os.getenv("HF_TOKEN", "")
-    gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
-    imgbb_key: str = os.getenv("IMGBB_KEY", "")
+    # API Keys - pydantic_settings reads from env automatically
+    hf_token: str = Field(default="", alias="HF_TOKEN")
+    gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
+    imgbb_key: str = Field(default="", alias="IMGBB_KEY")
     
     # CORS Origins - 환경에 따라 동적 설정
     allowed_origins: List[str] = [
@@ -23,7 +24,7 @@ class Settings(BaseSettings):
     # Application Settings
     app_title: str = "VIBE_LINK API"
     app_version: str = "1.0.0"
-    debug: bool = os.getenv("DEBUG", "false").lower() == "true"
+    debug: bool = False
     
     # Hugging Face Models
     flux_model: str = "black-forest-labs/FLUX.1-schnell"
@@ -43,6 +44,7 @@ class Settings(BaseSettings):
     
     class Config:
         env_file = ".env"
+        populate_by_name = True  # Allow field aliases
         case_sensitive = False
 
 
