@@ -32,4 +32,4 @@ ENV HOME=/home/user \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Run app
-CMD ["uvicorn", "test_app:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
