@@ -74,12 +74,20 @@ async def capture_screenshot(url: str) -> tuple[str, str]:
         )
         
         # === Phase 2: 침투 (Navigation) ===
+        navigation_success = False
         try:
             # domcontentloaded: HTML 뼈대만 로딩되면 진행 (10초 타임아웃)
             await page.goto(url, {'waitUntil': 'domcontentloaded', 'timeout': 10000})
+            navigation_success = True
         except Exception as e:
-            logger.warning(f"Navigation timeout or error: {e}, proceeding with current state")
-            # 타임아웃 되어도 그때까지 로딩된 것으로 진행
+            logger.warning(f"Navigation error: {e}, retrying with longer timeout...")
+            # 재시도: 더 긴 타임아웃으로 최소한의 로딩이라도 시도
+            try:
+                await page.goto(url, {'waitUntil': 'load', 'timeout': 15000})
+                navigation_success = True
+            except Exception as e2:
+                logger.error(f"Navigation failed completely: {e2}")
+                raise Exception(f"Failed to load page: {url}. Error: {str(e2)}")
         
         # === Phase 3: 시각 데이터 수집 (Screenshot) ===
         screenshot_path = '/tmp/screenshot.png'
