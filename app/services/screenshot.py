@@ -41,6 +41,14 @@ async def capture_screenshot(url: str) -> tuple[str, str]:
     if not url.startswith(('http://', 'https://')):
         url = f'https://{url}'
     
+    # URL 정규화: www 자동 추가 시도 (DNS 해석 실패 방지)
+    original_url = url
+    if 'www.' not in url:
+        # instagram.com -> www.instagram.com
+        url_with_www = url.replace('://', '://www.', 1)
+    else:
+        url_with_www = None
+    
     # Set environment variables for Pyppeteer
     os.environ['PYPPETEER_CHROMIUM_REVISION'] = '1181205'
     os.environ['PYPPETEER_EXECUTABLE_PATH'] = settings.puppeteer_executable_path
@@ -75,19 +83,46 @@ async def capture_screenshot(url: str) -> tuple[str, str]:
         
         # === Phase 2: 침투 (Navigation) ===
         navigation_success = False
+        last_error = None
+        
+        # 첫 시도: 원본 URL
         try:
-            # domcontentloaded: HTML 뼈대만 로딩되면 진행 (10초 타임아웃)
             await page.goto(url, {'waitUntil': 'domcontentloaded', 'timeout': 10000})
             navigation_success = True
         except Exception as e:
-            logger.warning(f"Navigation error: {e}, retrying with longer timeout...")
-            # 재시도: 더 긴 타임아웃으로 최소한의 로딩이라도 시도
-            try:
-                await page.goto(url, {'waitUntil': 'load', 'timeout': 15000})
-                navigation_success = True
-            except Exception as e2:
-                logger.error(f"Navigation failed completely: {e2}")
-                raise Exception(f"Failed to load page: {url}. Error: {str(e2)}")
+            last_error = e
+            logger.warning(f"Navigation failed for {url}: {e}")
+            
+            # 재시도 1: www 추가 버전 (DNS 해석 실패 대응)
+            if url_with_www and url_with_www != url:
+                try:
+                    logger.info(f"Retrying with www: {url_with_www}")
+                    await page.goto(url_with_www, {'waitUntil': 'domcontentloaded', 'timeout': 10000})
+                    navigation_success = True
+                    url = url_with_www  # 성공한 URL로 업데이트
+                except Exception as e2:
+                    last_error = e2
+                    logger.warning(f"www retry also failed: {e2}")
+            
+            # 재시도 2: 더 긴 타임아웃 (느린 사이트 대응)
+            if not navigation_success:
+                try:
+                    logger.info(f"Final retry with longer timeout: {url}")
+                    await page.goto(url, {'waitUntil': 'load', 'timeout': 15000})
+                    navigation_success = True
+                except Exception as e3:
+                    last_error = e3
+        
+        # 모든 시도 실패 시 명확한 에러 메시지
+        if not navigation_success:
+            error_msg = str(last_error)
+            if 'ERR_NAME_NOT_RESOLVED' in error_msg:
+                raise Exception(
+                    f"DNS 해석 실패: '{original_url}' 도메인을 찾을 수 없습니다. "
+                    f"서버 환경에서 이 사이트 접속이 차단되었거나, 잘못된 URL입니다."
+                )
+            else:
+                raise Exception(f"페이지 로딩 실패: {url}. Error: {error_msg}")
         
         # === Phase 3: 시각 데이터 수집 (Screenshot) ===
         screenshot_path = '/tmp/screenshot.png'
