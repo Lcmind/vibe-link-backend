@@ -10,12 +10,13 @@ from app.core.config import settings
 genai.configure(api_key=settings.gemini_api_key)
 
 
-async def analyze_with_gemini(screenshot_path: str) -> dict:
+async def analyze_with_gemini(screenshot_path: str, extracted_text: str = "") -> dict:
     """
     Analyze website screenshot using Gemini Vision AI.
     
     Args:
         screenshot_path: Path to the screenshot file
+        extracted_text: DOM text extracted from the website
         
     Returns:
         dict: Analysis results with title, atmosphere, colors, and keywords
@@ -26,7 +27,10 @@ async def analyze_with_gemini(screenshot_path: str) -> dict:
     model = genai.GenerativeModel(settings.gemini_model)
     img = Image.open(screenshot_path)
     
-    prompt = """
+    # DOM 텍스트를 프롬프트에 추가
+    context_text = f"\n\n=== WEBSITE TEXT CONTEXT ===\n{extracted_text[:2000]}\n" if extracted_text else ""
+    
+    prompt = f"""
 You are a Senior Creative Director analyzing a website screenshot for a commercial poster design.
 
 === TASK ===

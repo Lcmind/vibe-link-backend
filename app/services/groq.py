@@ -6,11 +6,12 @@ import base64
 import json
 from app.core.config import settings
 
-async def analyze_with_groq(screenshot_path: str) -> dict:
+async def analyze_with_groq(screenshot_path: str, extracted_text: str = "") -> dict:
     """
     Analyze website screenshot using Groq Llama-4-Maverick 멀티모달 API.
     Args:
         screenshot_path: Path to the screenshot file
+        extracted_text: DOM text extracted from the website
     Returns:
         dict: Analysis results with title, atmosphere, colors, and keywords
     Raises:
@@ -20,7 +21,10 @@ async def analyze_with_groq(screenshot_path: str) -> dict:
     with open(screenshot_path, "rb") as img_file:
         img_b64 = base64.b64encode(img_file.read()).decode("utf-8")
 
-    prompt = """
+    # DOM 텍스트를 프롬프트에 추가
+    context_text = f"\n\n=== WEBSITE TEXT CONTEXT ===\n{extracted_text[:2000]}\n" if extracted_text else ""
+
+    prompt = f"""
 You are a Senior Creative Director analyzing a website screenshot for a commercial poster design.
 
 === TASK ===

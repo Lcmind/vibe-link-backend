@@ -33,14 +33,14 @@ async def create_poster(request: PosterRequest):
         PosterResponse with poster URL and analysis
     """
     try:
-        # Step 1: Capture screenshot
-        screenshot_path = await capture_screenshot(request.url)
+        # Step 1: Capture screenshot + DOM text
+        screenshot_path, extracted_text = await capture_screenshot(request.url)
         
         # Step 2: 분석 모델 자동 선택
         if settings.analysis_model == "groq":
-            analysis = await analyze_with_groq(screenshot_path)
+            analysis = await analyze_with_groq(screenshot_path, extracted_text)
         else:
-            analysis = await analyze_with_gemini(screenshot_path)
+            analysis = await analyze_with_gemini(screenshot_path, extracted_text)
         
         # Step 3: Generate poster with Flux (brand text included in prompt)
         poster_path = await generate_poster(analysis)
